@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("HammingDesktop")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+000af19a3a6b9320d4da6c3cc638b39d2d7746fe")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a60b41c2729a817bbe5da1d19a392e532a01e7ca")]
 [assembly: System.Reflection.AssemblyProductAttribute("HammingDesktop")]
 [assembly: System.Reflection.AssemblyTitleAttribute("HammingDesktop")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
