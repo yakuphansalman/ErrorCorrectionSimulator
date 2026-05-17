@@ -146,36 +146,37 @@ public partial class Form0 : Form
         }
         return formattedBinary;
     }
-    private void PrintWithErrorHighlight(RichTextBox box, string binaryText, uint syndrome, bool isSyndromeBox = false)
+    private void PrintWithErrorHighlight(RichTextBox box, string cleanText, string corruptedText,  bool isSyndromeBox = false)
     {
-        box.Text = binaryText;
+        box.Text = corruptedText;
 
-        if(syndrome == 0)
+    if (isSyndromeBox)
+    {
+        box.SelectAll();
+        box.SelectionColor = Color.Orange;
+        return;
+    }
+
+    if (cleanText == corruptedText)
+    {
+        box.SelectAll();
+        box.SelectionColor = fgGreen;
+        return;
+    }
+
+    box.SelectAll();
+    box.SelectionColor = fgGreen;
+
+    for (int i = 0; i < corruptedText.Length; i++)
+    {
+        // Temiz metin ile bozuk metin nerede uyuşmuyorsa, orası bozuk bittir
+        if (i < cleanText.Length && cleanText[i] != corruptedText[i])
         {
-            box.SelectAll();
-            box.SelectionColor = fgGreen;
-            return;
-        }
-
-        if (isSyndromeBox)
-        {
-            box.SelectAll();
-            box.SelectionColor = Color.Orange;
-            return;
-        }
-
-        int spacesToSkip = ((int)syndrome - 1) /4;
-        int errorIndex = binaryText.Length - ((int)syndrome + spacesToSkip);
-
-        if(errorIndex >= 0 && errorIndex < binaryText.Length)
-        {
-            box.SelectAll();
-            box.SelectionColor = fgGreen;
-
-            box.Select(errorIndex, 1);
+            box.Select(i, 1);
             box.SelectionColor = Color.White;
             box.SelectionBackColor = Color.Red;
         }
+    }
     }
 
     private void ButtonEvent(object? sender, EventArgs e)
@@ -189,21 +190,29 @@ public partial class Form0 : Form
             uint c_f_old; uint c_f_new;
             uint c_syndrome; uint c_total_length;
 
+            
             uint data_out = Hamming.run(data, len,
                             out c_memory_in, out c_memory_out,
                             out c_data_old, out c_data_new,
                             out c_f_old, out c_f_new,
                             out c_syndrome, out c_total_length);
-            _memory_in_text.Text = ToBinary(c_memory_in, (int)c_total_length);
+
+            string memoryInStr = ToBinary(c_memory_in, (int)c_total_length);
+            string memoryOutStr = ToBinary(c_memory_out, (int)c_total_length);
+            string syndromeStr = ToBinary(c_syndrome, (int)(c_total_length - len));
+          
+            _memory_in_text.Text = memoryInStr;
              _data_old_text.Text = ToBinary(c_data_old, (int)len);
             _data_new_text.Text = ToBinary(c_data_new, (int)len);
             _f_old_text.Text = ToBinary(c_f_old, (int)(c_total_length - len));
             _f_new_text.Text = ToBinary(c_f_new, (int)(c_total_length - len));
 
-            _data_out_text.Text = ToBinary(data_out, (int)len);           
+            _data_out_text.Text = ToBinary(data_out, (int)len); 
+            
+            
 
-            PrintWithErrorHighlight(_memory_out_text, ToBinary(c_memory_out, (int)c_total_length), c_syndrome);
-            PrintWithErrorHighlight(_syndrome_text, ToBinary(c_syndrome, (int)(c_total_length - len)), c_syndrome, true);
+            PrintWithErrorHighlight(_memory_out_text, memoryInStr, memoryOutStr);
+            PrintWithErrorHighlight(_syndrome_text, syndromeStr, syndromeStr, true);
 
             _data_out_text.SelectAll();
             _data_out_text.SelectionColor = Color.Cyan;
